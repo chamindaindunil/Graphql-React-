@@ -8,7 +8,7 @@ const events = async eventIds => {
     try {
         const events = await Event.find({ _id: { $in: eventIds } });
         events.map(event => {
-                return { ...event._doc, date: new Date(event._doc.date).toISOString(), creator: user.bind(this, event.creator) };
+            return { ...event._doc, date: new Date(event._doc.date).toISOString(), creator: user.bind(this, event.creator) };
         });
         return events;
     } catch (err) {
@@ -23,7 +23,7 @@ const user = async userId => {
     } catch (err) {
         throw err;
     }
-    
+
 };
 
 module.exports = {
@@ -60,7 +60,7 @@ module.exports = {
             const result = await event.save();
             createdEvent = { ...result._doc, date: new Date(event._doc.date).toISOString(), creator: user.bind(this, result._doc.creator) };
             const creator = await User.findById('632a6d335ae6d227f7b1dd59');
-        
+
             if (!creator) {
                 throw new Error('Not found user.');
             }
@@ -83,12 +83,12 @@ module.exports = {
                 password: hashedPassword
             });
             const result = await user.save();
-        
+
             return { ...result._doc, password: null, _id: result.id };
         } catch (err) {
             throw err;
         }
-        
+
 
     }
 }
