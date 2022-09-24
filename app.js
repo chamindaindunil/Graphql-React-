@@ -21,7 +21,7 @@ app.use('/graphql', graphqlHTTP({
 
 mongoose.connect("mongodb+srv://graphql:0TFY9CQiO2CGJbKe@sandbox.he3hb.mongodb.net/event-react?retryWrites=true&w=majority")
     .then(() => {
-        app.listen(3000);
+        app.listen(5000);
     }).catch(err => {
         console.log(err);
     });
