@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import Modal from "../components/Modal/Modal";
 import Backdrop from "../components/Backdrop/Backdrop";
+import EventList from "../components/Events/EventList/EventList";
 import AuthContext from "../context/auth-context";
 import "./Events.css";
 
@@ -100,6 +101,9 @@ class EventsPage extends Component {
                         description
                         price
                         date
+                        creator {
+                            _id
+                        }
                     }
                 }              
             `
@@ -128,13 +132,7 @@ class EventsPage extends Component {
     }
 
     render() {
-        const eventlist = this.state.events.map(event => {
-            return (
-                <li key={event._id} className="events__list-item">
-                    {event.title}
-                </li>
-            );
-        });
+        
 
         return (
             <React.Fragment>
@@ -173,9 +171,7 @@ class EventsPage extends Component {
                         <button className="btn" onClick={this.startCreateEventHandler}>Create Event</button>
                     </div>
                 )}
-                <ul className="events__list">
-                    {eventlist}
-                </ul>
+                <EventList events={this.state.events} authUserId={this.context.userId} />
             </React.Fragment>
         );
     }
