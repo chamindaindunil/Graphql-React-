@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import Modal from "../components/Modal/Modal";
 import Backdrop from "../components/Backdrop/Backdrop";
+import Spinner from "../components/Spinner/Spinner";
 import EventList from "../components/Events/EventList/EventList";
 import AuthContext from "../context/auth-context";
 import "./Events.css";
@@ -9,7 +10,8 @@ import "./Events.css";
 class EventsPage extends Component {
     state = {
         creating: false,
-        events: []
+        events: [],
+        isLoading: false
     };
 
     static contextType = AuthContext; 
@@ -54,10 +56,6 @@ class EventsPage extends Component {
                         description
                         price
                         date
-                        creator {
-                            _id
-                            email
-                        }
                     }
                 }
             `
@@ -80,7 +78,20 @@ class EventsPage extends Component {
             return res.json();
         })
         .then(resData => {
-            this.fetchEvents();
+            this.setState(prevState => {
+                const updatedEvents = [...prevState.events];
+                updatedEvents.push({
+                    _id: resData.data.createEvent._id,
+                    title: resData.data.createEvent.title,
+                    description: resData.data.createEvent.discription,
+                    price: resData.data.createEvent.price,
+                    date: resData.data.createEvent.date,
+                    creator: {
+                        _id: this.context.userId
+                    }
+                });
+                return {events: updatedEvents};
+            });
         })
         .catch(err => {
             console.log(err);
@@ -92,6 +103,7 @@ class EventsPage extends Component {
     };
 
     fetchEvents() {
+        this.setState({isLoading: true});
         const requestBody = {
             query: `
                 query {
@@ -124,10 +136,11 @@ class EventsPage extends Component {
         })
         .then(resData => {
             const events = resData.data.events;
-            this.setState({events: events});
+            this.setState({events: events, isLoading: false});
         })
         .catch(err => {
             console.log(err);
+            this.setState({ isLoading: false });
         });
     }
 
@@ -171,7 +184,7 @@ class EventsPage extends Component {
                         <button className="btn" onClick={this.startCreateEventHandler}>Create Event</button>
                     </div>
                 )}
-                <EventList events={this.state.events} authUserId={this.context.userId} />
+                { this.state.isLoading ? (<Spinner />) : (<EventList events={this.state.events} authUserId={this.context.userId} />) }
             </React.Fragment>
         );
     }
